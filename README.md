@@ -80,14 +80,14 @@ Run the provided SQL script to set up Service Broker:
 ```sql
 -- Execute the SQL scripts one by one
 -- This will:
--- 1. Enable Service Broker on GHMS database
+-- 1. Enable Service Broker on HMS database
 -- 2. Create message types and contracts
 -- 3. Create queues and services
 -- 4. Create necessary tables
 -- 5. Create stored procedure sp_NotifyRISMiddleware
 
 -- =======================================================================
--- 1. Enable Service Broker on GHMS database
+-- 1. Enable Service Broker on HMS database
 -- =======================================================================
 
 USE master;
@@ -95,26 +95,26 @@ USE master;
 -- Check active connections
 SELECT COUNT(*) AS ActiveConnections
 FROM sys.dm_exec_sessions
-WHERE database_id = DB_ID('GHMS')
+WHERE database_id = DB_ID('HMS')
 AND session_id != @@SPID;
 
 -- Change DB mode to SINGLE_USER 
-ALTER DATABASE GHMS SET SINGLE_USER WITH ROLLBACK AFTER 60 SECONDS;
+ALTER DATABASE HMS SET SINGLE_USER WITH ROLLBACK AFTER 60 SECONDS;
 
 -- View DB user mode
 SELECT name, user_access_desc 
 FROM sys.databases 
-WHERE name = 'GHMS';
+WHERE name = 'HMS';
 
 -- Enable Service Broker on database
-ALTER DATABASE GHMS SET ENABLE_BROKER;
+ALTER DATABASE HMS SET ENABLE_BROKER;
 
 -- Restore DB mode to MULTI_USER
-ALTER DATABASE GHMS SET MULTI_USER;
+ALTER DATABASE HMS SET MULTI_USER;
 -- =======================================================================
 -- 2. Create message types and contracts
 -- =======================================================================
-USE GHMS;
+USE HMS;
 
 -- Create Message Type (NONE = no validation)
 CREATE MESSAGE TYPE [//RIS/OrderMessage]
@@ -400,7 +400,7 @@ SELECT * FROM RISReport ORDER BY ReportTime DESC;
 
 1. Verify Service Broker is enabled:
    ```sql
-   SELECT is_broker_enabled FROM sys.databases WHERE name = 'GHMS';
+   SELECT is_broker_enabled FROM sys.databases WHERE name = 'HMS';
    ```
 2. Check queue for stuck messages
 3. Review service logs for error messages
